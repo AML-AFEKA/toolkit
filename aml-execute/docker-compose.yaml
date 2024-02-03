@@ -1,0 +1,14 @@
+version: "3.8"
+volumes:
+  db:
+    driver: local
+  queue:
+    driver: local
+services:
+  app-client:
+    image: app-client:0.1.0
+    restart: always
+    ports: 
+     - 80:3000
+    environment:
+      - PORT=5000
