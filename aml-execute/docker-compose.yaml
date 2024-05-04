@@ -2,6 +2,12 @@ version: "3.8"
 volumes:
   db:
     driver: local
+
+networks:
+ default:
+   name: elastic
+   external: false
+   
 services:
   elasticsearch:
     image: elasticsearch:7.14.0
