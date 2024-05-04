@@ -2,13 +2,77 @@ version: "3.8"
 volumes:
   db:
     driver: local
-  queue:
-    driver: local
 services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - GOSU_VERSION=1.17
+      - JSYAML_VERSION=3.13.1
+      - MONGO_PACKAGE=mongodb-org
+      - MONGO_REPO=repo.mongodb.org
+      - MONGO_MAJOR=7.0
+      - MONGO_VERSION=7.0.8
+      - HOME=/data/db
+    volumes:
+      - db:/data/configdb
+      - db:/data/db
+
+  app-server:
+    image: app-server:latest
+    restart: always
+    ports: 
+     - 4000:4000
+    environment:
+      - SERVER_PORT=4000
+
+      - DATABASE_SERVICE_URL="http://localhost:5000"
+      - CLASSIFICATION_SERVICE_URL="http://localhost:4002/"
+
+      - KIBANA_URL="http://localhost:9200"
+
   app-client:
-    image: app-client:0.1.0
+    image: app-client:latest
     restart: always
     ports: 
      - 80:3000
     environment:
-      - PORT=5000
+      - FAST_REFRESH=false
+      - SKIP_PREFLIGHT_CHECK=true
+
+      - REACT_APP_GRAPHQL_URL="http://localhost:4000/"
+
+      - REACT_APP_DASHBOARD_KIBANA_URL="http://localhost:5601/app/canvas#/workpad/workpad-33aa87e5-fc5e-43dd-938e-1f145a0ffb5f/page/1?__fullScreen=true"
+    depends_on:
+      - app-server
+
+
+  database-handler:
+    image: database-handler:latest
+    restart: always
+    ports: 
+    - 5000:5000
+    environment:
+      - SERVICE_PORT=5000
+
+      - GRAPHQL_URL="http://localhost:4000/"
+
+      - MONGODB_URL="mongodb://localhost:27017/amldb"
+
+      - KIBANA_URL="http://localhost:9200"
+    depends_on:
+      - mongodb
+
+  classification:
+    image: classification:latest
+    restart: always
+    ports: 
+    - 4002:4002
+    environment:
+      - SERVICE_PORT=4002
+
+      - GRAPHQL_URL="http://localhost:4000/"
+      - KIBANA_URL="http://localhost:9200"
