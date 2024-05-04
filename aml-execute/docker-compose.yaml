@@ -4,10 +4,10 @@ volumes:
     driver: local
 
 networks:
- default:
+ elastic:
    name: elastic
    external: false
-   
+
 services:
   elasticsearch:
     image: elasticsearch:7.14.0
