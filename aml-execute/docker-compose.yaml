@@ -3,6 +3,30 @@ volumes:
   db:
     driver: local
 services:
+  elasticsearch:
+    image: elasticsearch:7.14.0
+    restart: always
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - elastic
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+
+  kibana:
+    image: kibana:7.14.0
+    restart: always
+    ports:
+      - 5601:5601
+    networks:
+      - elastic
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+
   mongodb:
     image: mongo:latest
     restart: always
@@ -29,10 +53,12 @@ services:
     environment:
       - SERVER_PORT=4000
 
-      - DATABASE_SERVICE_URL="http://localhost:5000"
-      - CLASSIFICATION_SERVICE_URL="http://localhost:4002/"
+      - DATABASE_SERVICE_URL="http://${ADDR}:5000"
+      - CLASSIFICATION_SERVICE_URL="http://${ADDR}:4002/"
 
-      - KIBANA_URL="http://localhost:9200"
+      - KIBANA_URL="http://${ADDR}:9200"
+    depends_on:
+      - kibana
 
   app-client:
     image: app-client:latest
@@ -43,9 +69,9 @@ services:
       - FAST_REFRESH=false
       - SKIP_PREFLIGHT_CHECK=true
 
-      - REACT_APP_GRAPHQL_URL="http://localhost:4000/"
+      - REACT_APP_GRAPHQL_URL="http://${ADDR}:4000/"
 
-      - REACT_APP_DASHBOARD_KIBANA_URL="http://localhost:5601/app/canvas#/workpad/workpad-33aa87e5-fc5e-43dd-938e-1f145a0ffb5f/page/1?__fullScreen=true"
+      - REACT_APP_DASHBOARD_KIBANA_URL="http://${ADDR}:5601/app/canvas#/workpad/workpad-33aa87e5-fc5e-43dd-938e-1f145a0ffb5f/page/1?__fullScreen=true"
     depends_on:
       - app-server
 
@@ -58,13 +84,14 @@ services:
     environment:
       - SERVICE_PORT=5000
 
-      - GRAPHQL_URL="http://localhost:4000/"
+      - GRAPHQL_URL="http://${ADDR}:4000/"
 
-      - MONGODB_URL="mongodb://localhost:27017/amldb"
+      - MONGODB_URL="mongodb://${ADDR}:27017/amldb"
 
-      - KIBANA_URL="http://localhost:9200"
+      - KIBANA_URL="http://${ADDR}:9200"
     depends_on:
       - mongodb
+      - app-server
 
   classification:
     image: classification:latest
@@ -74,5 +101,7 @@ services:
     environment:
       - SERVICE_PORT=4002
 
-      - GRAPHQL_URL="http://localhost:4000/"
-      - KIBANA_URL="http://localhost:9200"
+      - GRAPHQL_URL="http://${ADDR}:4000/"
+      - KIBANA_URL="http://${ADDR}:9200"
+    depends_on:
+      - app-server
