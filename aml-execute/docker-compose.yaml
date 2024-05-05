@@ -87,6 +87,8 @@ services:
     ports: 
      - 81:3030
     environment:
+      - PORT 3030
+      
       - FAST_REFRESH=false
       - SKIP_PREFLIGHT_CHECK=true
 
