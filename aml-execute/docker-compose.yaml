@@ -81,6 +81,19 @@ services:
     depends_on:
       - app-server
 
+  app-maintenance:
+    image: ghcr.io/aml-afeka/app-maintenance:latest
+    restart: always
+    ports: 
+     - 81:3030
+    environment:
+      - FAST_REFRESH=false
+      - SKIP_PREFLIGHT_CHECK=true
+
+      - REACT_APP_GRAPHQL_URL=http://${ADDR}:4000/
+    depends_on:
+      - app-server
+
 
   database-handler:
     image: ghcr.io/aml-afeka/database-handler:latest
