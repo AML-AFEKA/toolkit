@@ -6,7 +6,7 @@ volumes:
 networks:
  elastic:
    name: elastic
-   external: false
+   external: true
 
 services:
   elasticsearch:
@@ -52,22 +52,22 @@ services:
       - db:/data/db
 
   app-server:
-    image: app-server:latest
+    image: ghcr.io/aml-afeka/app-server:latest
     restart: always
     ports: 
      - 4000:4000
     environment:
       - SERVER_PORT=4000
 
-      - DATABASE_SERVICE_URL="http://${ADDR}:5000"
-      - CLASSIFICATION_SERVICE_URL="http://${ADDR}:4002/"
+      - DATABASE_SERVICE_URL="http://database-handler:5000"
+      - CLASSIFICATION_SERVICE_URL="http://classification:4002/"
 
-      - KIBANA_URL="http://${ADDR}:9200"
+      - KIBANA_URL="http://elasticsearch:9200"
     depends_on:
-      - kibana
+      - elasticsearch
 
   app-client:
-    image: app-client:latest
+    image: ghcr.io/aml-afeka/app-client:latest
     restart: always
     ports: 
      - 80:3000
@@ -75,39 +75,39 @@ services:
       - FAST_REFRESH=false
       - SKIP_PREFLIGHT_CHECK=true
 
-      - REACT_APP_GRAPHQL_URL="http://${ADDR}:4000/"
+      - REACT_APP_GRAPHQL_URL="http://app-server:4000/"
 
-      - REACT_APP_DASHBOARD_KIBANA_URL="http://${ADDR}:5601/app/canvas#/workpad/workpad-33aa87e5-fc5e-43dd-938e-1f145a0ffb5f/page/1?__fullScreen=true"
+      - REACT_APP_DASHBOARD_KIBANA_URL="http://kibana:5601/app/canvas#/workpad/workpad-33aa87e5-fc5e-43dd-938e-1f145a0ffb5f/page/1?__fullScreen=true"
     depends_on:
       - app-server
 
 
   database-handler:
-    image: database-handler:latest
+    image: ghcr.io/aml-afeka/database-handler:latest
     restart: always
     ports: 
     - 5000:5000
     environment:
       - SERVICE_PORT=5000
 
-      - GRAPHQL_URL="http://${ADDR}:4000/"
+      - GRAPHQL_URL="http://app-server:4000/"
 
-      - MONGODB_URL="mongodb://${ADDR}:27017/amldb"
+      - MONGODB_URL="mongodb://mongodb:27017/amldb"
 
-      - KIBANA_URL="http://${ADDR}:9200"
+      - KIBANA_URL="http://elasticsearch:9200"
     depends_on:
       - mongodb
       - app-server
 
   classification:
-    image: classification:latest
+    image: ghcr.io/aml-afeka/classification:latest
     restart: always
     ports: 
     - 4002:4002
     environment:
       - SERVICE_PORT=4002
 
-      - GRAPHQL_URL="http://${ADDR}:4000/"
-      - KIBANA_URL="http://${ADDR}:9200"
+      - GRAPHQL_URL="http://app-server:4000/"
+      - KIBANA_URL="http://elasticsearch:9200"
     depends_on:
       - app-server
