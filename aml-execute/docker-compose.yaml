@@ -60,7 +60,7 @@ services:
       - SERVER_PORT=4000
 
       - DATABASE_SERVICE_URL=http://database-handler:5000
-      - CLASSIFICATION_SERVICE_URL=http://classification:4002/
+      - CLASSIFICATION_SERVICE_URL=http://localhost:4002/
 
       - KIBANA_URL=http://elasticsearch:9200
     depends_on:
@@ -116,15 +116,15 @@ services:
       - mongodb
       - app-server
 
-  classification:
-    image: ghcr.io/aml-afeka/classification:latest
-    restart: always
-    ports: 
-    - 4002:4002
-    environment:
-      - SERVICE_PORT=4002
+  # classification:
+  #   image: ghcr.io/aml-afeka/classification:latest
+  #   restart: always
+  #   ports: 
+  #   - 4002:4002
+  #   environment:
+  #     - SERVICE_PORT=4002
 
-      - GRAPHQL_URL=http://app-server:4000/
-      - KIBANA_URL=http://elasticsearch:9200
-    depends_on:
-      - app-server
+  #     - GRAPHQL_URL=http://app-server:4000/
+  #     - KIBANA_URL=http://elasticsearch:9200
+  #   depends_on:
+  #     - app-server
