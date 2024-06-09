@@ -60,7 +60,7 @@ services:
       - SERVER_PORT=4000
 
       - DATABASE_SERVICE_URL=http://database-handler:5000
-      - CLASSIFICATION_SERVICE_URL=http://localhost:4002/
+      - CLASSIFICATION_SERVICE_URL=http://${ADDR}:4002/
 
       - KIBANA_URL=http://elasticsearch:9200
     depends_on:
