@@ -9,48 +9,6 @@ networks:
    external: true
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
-    restart: always
-    ports:
-      - 9200:9200
-      - 9300:9300
-    networks:
-      - elastic
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.14.0
-    restart: always
-    ports:
-      - 5601:5601
-    networks:
-      - elastic
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
-
-  mongodb:
-    image: mongo:latest
-    restart: always
-    ports:
-      - 27017:27017
-    environment:
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - GOSU_VERSION=1.17
-      - JSYAML_VERSION=3.13.1
-      - MONGO_PACKAGE=mongodb-org
-      - MONGO_REPO=repo.mongodb.org
-      - MONGO_MAJOR=7.0
-      - MONGO_VERSION=7.0.8
-      - HOME=/data/db
-    volumes:
-      - db:/data/configdb
-      - db:/data/db
-
   app-server:
     image: ghcr.io/aml-afeka/app-server:latest
     restart: always
@@ -65,8 +23,6 @@ services:
       - CLASSIFICATION_SERVICE_URL=http://${ADDR}:4002/
 
       - KIBANA_URL=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
 
   app-client:
     image: ghcr.io/aml-afeka/app-client:latest
@@ -121,7 +77,6 @@ services:
 
       - KIBANA_URL=http://elasticsearch:9200
     depends_on:
-      - mongodb
       - app-server
 
   # classification:
