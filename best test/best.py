@@ -10,10 +10,11 @@ images = glob.glob('*.jpg')
 for image in images:
     result = model.predict(image)
     box = result[0].boxes
-    predict = box.conf[0]
     
     if len(box.conf) < 1:
         continue
+    
+    predict = box.conf[0]
     
     for i in range(0, 10):
         if predict >= top10_predict[i]:
