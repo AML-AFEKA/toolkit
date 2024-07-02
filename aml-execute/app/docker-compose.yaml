@@ -39,7 +39,8 @@ services:
 
       - REACT_APP_GRAPHQL_URL=http://${ADDR}:4000/
 
-      - REACT_APP_DASHBOARD_KIBANA_URL=http://${ADDR}:5601/app/canvas#/workpad/workpad-33aa87e5-fc5e-43dd-938e-1f145a0ffb5f/page/1?__fullScreen=true
+      - REACT_APP_DASHBOARD_KIBANA_URL=http://${ADDR}:5601/app/canvas#/workpad/workpad-00c1e6f9-9128-412c-9d72-bc939f03b4d0/page/1?__fullScreen=true
+      
     depends_on:
       - app-server
 
