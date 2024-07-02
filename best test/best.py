@@ -27,4 +27,4 @@ for image in images:
  
 print("\n@@ result: @@\n")
 for i in range(0, 10):
-    print(f'({i})  {image} : {predict}')
+    print(f'({i})  {top10_image[i]} : {top10_predict[i]}')
