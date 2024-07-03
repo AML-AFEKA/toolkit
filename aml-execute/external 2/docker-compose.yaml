@@ -11,6 +11,7 @@ networks:
     name: db
     external: true
 
+services:
   mongodb:
     image: mongo:latest
     restart: always
