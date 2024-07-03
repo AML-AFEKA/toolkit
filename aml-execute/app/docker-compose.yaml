@@ -78,7 +78,7 @@ services:
 
       - GRAPHQL_URL=http://app-server:4000/
 
-      - MONGODB_URL=mongodb://mongodb:27018/amldb
+      - MONGODB_URL=mongodb://${ADDR}:27017/amldb
 
       - KIBANA_URL=http://elasticsearch:9200
     depends_on:
