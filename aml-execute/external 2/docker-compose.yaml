@@ -1,0 +1,32 @@
+version: "3.8"
+volumes:
+  db:
+    driver: local
+
+networks:
+  elastic:
+   name: elastic
+   external: true
+  db:
+    name: db
+    external: true
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    networks:
+      - db
+    ports:
+      - 27018:27017
+    environment:
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - GOSU_VERSION=1.17
+      - JSYAML_VERSION=3.13.1
+      - MONGO_PACKAGE=mongodb-org
+      - MONGO_REPO=repo.mongodb.org
+      - MONGO_MAJOR=7.0
+      - MONGO_VERSION=7.0.8
+      - HOME=/data/db
+    volumes:
+      - db:/data/configdb
+      - db:/data/db
