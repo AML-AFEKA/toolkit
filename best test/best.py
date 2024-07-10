@@ -12,7 +12,7 @@ model = YOLO('best.pt')
 
 images = glob.glob('*.jpg')
 for image in images:
-    conf = f'{image.split(".")[0]}.text'
+    conf = f'{image.split(".")[0]}.txt'
     
     if os.path.getsize(conf) < 1:
         continue
@@ -30,7 +30,7 @@ for image in images:
     
     for i in range(0, 10):
         if typ == '0' and predict >= top10_predict_0[i]:
-            for j in range(i + 1, 10):
+            for j in range(9, i + 1, -1):
                 top10_predict_0[j] = top10_predict_0[j - 1]
                 top10_image_0[j] = top10_image_0[j - 1]
                 
@@ -43,7 +43,7 @@ for image in images:
         
     for i in range(0, 10):
         if typ == '1' and predict >= top10_predict_1[i]:
-            for j in range(i + 1, 10):
+            for j in range(9, i + 1, -1):
                 top10_predict_1[j] = top10_predict_1[j - 1]
                 top10_image_1[j] = top10_image_1[j - 1]
                 
