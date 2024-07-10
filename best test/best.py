@@ -1,3 +1,4 @@
+import os
 from ultralytics import YOLO
 import glob
 
@@ -11,8 +12,12 @@ model = YOLO('best.pt')
 
 images = glob.glob('*.jpg')
 for image in images:
-    conf = image.split(".")[0]
-    f = open(f'{conf}.txt', "r")
+    conf = f'{image.split(".")[0]}.text'
+    
+    if os.path.getsize(conf) < 1:
+        continue
+    
+    f = open(conf, "r")
     typ = f.read()[0]
     
     result = model.predict(image)
@@ -24,7 +29,7 @@ for image in images:
     predict = box.conf[0]
     
     for i in range(0, 10):
-        if typ == 0 and predict >= top10_predict_0[i]:
+        if typ == '0' and predict >= top10_predict_0[i]:
             for j in range(i + 1, 10):
                 top10_predict_0[j] = top10_predict_0[j - 1]
                 top10_image_0[j] = top10_image_0[j - 1]
@@ -36,7 +41,8 @@ for image in images:
             
             break
         
-        if typ == 1 and predict >= top10_predict_1[i]:
+    for i in range(0, 10):
+        if typ == '1' and predict >= top10_predict_1[i]:
             for j in range(i + 1, 10):
                 top10_predict_1[j] = top10_predict_1[j - 1]
                 top10_image_1[j] = top10_image_1[j - 1]
