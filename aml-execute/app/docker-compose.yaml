@@ -61,9 +61,9 @@ services:
       - SKIP_PREFLIGHT_CHECK=true
 
       - REACT_APP_GRAPHQL_URL=http://${ADDR}:4000/
-      - REACT_APP_KIBANA_URL="http://${ADDR}:5601"
-      - REACT_APP_CLIENT_URL="http://${ADDR}:80"
-      - REACT_APP_GIT_URL="https://github.com/AML-AFEKA"
+      - REACT_APP_KIBANA_URL=http://${ADDR}:5601
+      - REACT_APP_CLIENT_URL=http://${ADDR}:80
+      - REACT_APP_GIT_URL=https://github.com/AML-AFEKA
     depends_on:
       - app-server
 
