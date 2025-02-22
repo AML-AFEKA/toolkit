@@ -3,7 +3,7 @@ import numpy as np
 
 from _data import data, title, cls
 
-SIZE = 515
+SIZE = 57
 
 def find_max(_pred, _cls):
     predict = 0.0
@@ -30,35 +30,36 @@ for i in range(SIZE):
     
     max_predict = max(predicts)
     
-    # fig, axs = plt.subplots(1, 2, figsize=(15, 10),sharey=True)
+    ###########################################
+    fig, axs = plt.subplots(1, 2, figsize=(15, 10),sharey=True)
     
-    # axs[0].bar(brightness, predicts)
-    # axs[1].plot(brightness, predicts)
+    axs[0].bar(brightness, predicts)
+    axs[1].plot(brightness, predicts)
 
-    # axs[0].fill_betweenx(predicts, 50, 0, facecolor='#aaa', alpha=.3)
-    # axs[1].fill_betweenx(predicts, 50, 0, facecolor='#aaa', alpha=.3)
+    axs[0].fill_betweenx(predicts, 50, 0, facecolor='#aaa', alpha=.3)
+    axs[1].fill_betweenx(predicts, 50, 0, facecolor='#aaa', alpha=.3)
 
-    # axs[0].axvline(50, color='yellow')
-    # axs[1].axvline(50, color='yellow')
+    axs[0].axvline(50, color='yellow')
+    axs[1].axvline(50, color='yellow')
     
     
-    # axs[0].axhline(predicts[4], color='red')
-    # axs[1].axhline(predicts[4], color='red')
+    axs[0].axhline(predicts[10], color='red')
+    axs[1].axhline(predicts[10], color='red')
 
-    # axs[0].set_xlabel('brightness')
-    # axs[0].set_ylabel('predicts')
+    axs[0].set_xlabel('brightness')
+    axs[0].set_ylabel('predicts')
 
-    # axs[1].set_xlabel('brightness')
-    # axs[1].set_ylabel('predicts')
+    axs[1].set_xlabel('brightness')
+    axs[1].set_ylabel('predicts')
     
-    # axs[1].set_title(max_predict, loc='center')
+    axs[1].set_title(max_predict, loc='center')
 
-    # fig.suptitle(f'image: {title[i]}')
+    fig.suptitle(f'image: {title[i]}')
 
-    # plt.ylim(min(predicts), max(predicts))
+    plt.ylim(min(predicts), max(predicts))
 
-    # plt.show()
-    
+    plt.show()
+    #################################################
     
     _pred, _cls = find_max(predicts, cls[i])
     original_cls = list(_cls.keys())[0]
@@ -74,11 +75,22 @@ for i in range(SIZE):
     undetectNagative += 1 if original_cls == 0 and predict_cls == -1 else 0
     
     trueNotExist = 100
+
+    # truePositive = 16
+    # trueNagative = 12
+    # falsePositive = 6
+    # falseNagative = 11
+    # undetectPositive = 8
+    # undetectNagative = 9
     
     
-accuracy = (truePositive + trueNagative + trueNotExist) / (truePositive + falsePositive + undetectPositive + trueNagative + falseNagative + undetectNagative + trueNotExist)
+accuracy    = (truePositive + trueNagative + trueNotExist) / (truePositive + falsePositive + undetectPositive + trueNagative + falseNagative + undetectNagative + trueNotExist)
+recall      = (truePositive) / (truePositive + falseNagative)
+precision   = (truePositive) / (truePositive + falsePositive)
 
 print("accuracy: ", accuracy*100)
+print("recall: ", recall*100)
+print("precision: ", precision*100)
 
 vegetables = ["Positive", "Negative", "Not Exist"]
 farmers = ["Positive", "Negative", "Not Exist"]
@@ -89,7 +101,7 @@ harvest = np.array([[truePositive, falsePositive, undetectPositive],
 
 
 fig, ax = plt.subplots()
-im = ax.imshow(harvest)
+im = ax.imshow(harvest, cmap='summer', interpolation='nearest')
 
 # Show all ticks and label them with the respective list entries
 ax.set_xticks(np.arange(len(farmers)), labels=farmers)
@@ -103,7 +115,7 @@ plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
 for i in range(len(vegetables)):
     for j in range(len(farmers)):
         text = ax.text(j, i, harvest[i, j],
-                       ha="center", va="center", color="w")
+                       ha="center", va="center", color="black")
 
 ax.set_title("Heatmap")
 fig.tight_layout()
